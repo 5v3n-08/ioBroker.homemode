@@ -7,6 +7,7 @@
 // The adapter-core module gives you access to the core ioBroker functions
 // you need to create an adapter
 const utils = require('@iobroker/adapter-core');
+//const _ = require('lodash');
 
 // Load your modules here, e.g.:
 // const fs = require("fs");
@@ -39,18 +40,17 @@ class Template extends utils.Adapter {
         // this.config:
        
         // this.log.info('config option2: ' + this.config.option2);
-        this.config.radarIntance = 'javascript.0';
         this.log.info(JSON.stringify(this.config));
-        for (const residents in RESIDENTS) {
-            this.setObjectNotExists(residents, {
+        for (const index in this.config.setup) {
+            this.setObjectNotExists(this.config.setup[index]['rgr'], {
                 type: 'channel',
                 common: {
-                    name: 'RESIDENTS: ' + residents
+                    name: 'RESIDENTS: ' + this.config.setup[index]['rgr']
                 },
                 native: {}
             });
 
-            this.setObjectNotExists(residents + '.state', {
+            this.setObjectNotExists(this.config.setup[index]['rgr'] + '.state', {
                 type: 'state',
                 common: {
                     name: 'state',
@@ -62,36 +62,50 @@ class Template extends utils.Adapter {
                 native: {}
             });
 
-            for (const roommate in RESIDENTS[residents]) {
-                this.setObjectNotExists(residents + '.' + roommate, {
-                    type: 'channel',
-                    common: {
-                        name: 'ROOMMATE: ' + roommate
-                    },
-                    native: {}
-                });
+            this.setObjectNotExists(this.config.setup[index]['rgr'] + '.' + this.config.setup[index]['rr'], {
+                type: 'channel',
+                common: {
+                    name: 'ROOMMATE: ' + this.config.setup[index]['rr']
+                },
+                native: {}
+            });
 
-                this.setObjectNotExists(residents + '.' + roommate + '.devices', {
-                    type: 'state',
-                    common: {
-                        name: 'devices',
-                        def: RESIDENTS[residents][roommate]['devices'],
-                        type: 'array',
-                        role: 'list',
-                        read: true,
-                        write: false
-                    },
-                    native: {}
-                });
+            this.setObjectNotExists(this.config.setup[index]['rgr'] + '.' + this.config.setup[index]['rr'] + '.devices', {
+                type: 'state',
+                common: {
+                    name: 'devices',
+                    def: this.config.setup[index]['devices'],
+                    type: 'array',
+                    role: 'list',
+                    read: true,
+                    write: false
+                },
+                native: {}
+            });
+            this.setObjectNotExists(this.config.setup[index]['rgr'] + '.' + this.config.setup[index]['rr'] + '.state', {
+                type: 'state',
+                common: {
+                    name: 'state',
+                    type: 'string',
+                    role: 'list',
+                    read: true,
+                    write: true,
+                    states: {
+                        home: 'home',
+                        gotosleep: 'gotosleep',
+                        absent: 'absent',
+                        gone: 'gone'
+                    }
+                },
+                native: {}
+            });
 
-                for (const device in RESIDENTS[residents][roommate]['devices']) {
-                    this.subscribeForeignStates(this.config.radarIntance + '.' + RESIDENTS[residents][roommate]['devices'][device] + '._here');
-                    this.log.info(this.config.radarIntance + '.' + RESIDENTS[residents][roommate]['devices'][device] + '._here');
-                }
-            }
-
-            
+            // for (const device in this.config.setup[index]['devices']) {
+            this.subscribeForeignStates(this.config.setup[index]['devices']);
+            this.log.info(this.config.setup[index]['devices']);
+            // }
         }
+
         /*
         For every state in the system there has to be also an object of type state
         Here a simple template for a boolean variable named "testVariable"
@@ -166,20 +180,29 @@ class Template extends utils.Adapter {
      * @param {ioBroker.State | null | undefined} state
      */
     onStateChange(id, state) {
-        if (state) {
-            // The state was changed
-            this.log.info(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
-        }
-        if (id.includes(this.config.radarIntance)) {
-            const device = id.split('.')[2];
-            // for (const residents in RESIDENTS) {
-            //     for (const roommate in RESIDENTS[residents]) {
-            //         if (condition) {
-                        
-            //         }
-            //     }
-            // }
-            this.log.info(device);
+        this.log.info(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
+
+        if (!id.includes('homemode.')) {
+            for (const index in this.config.setup) {
+                if (this.config.setup[index]['devices'].includes(id)) {
+                    this.setState(this.config.setup[index]['rgr'] + '.' + this.config.setup[index]['rr'] + '.state', state.val ? 'home':'absent');
+                }
+            }
+        } else {
+            const split = id.split('.');
+            if (split.length == 5 && split[4] == 'state') {
+                const states = [];
+                for (const index in this.config.setup) {
+                    if (this.config.setup[index]['rgr'] == split[2]) {
+                        this.getState(this.config.setup[index]['rgr'] + '.' + this.config.setup[index]['rr'] + '.state', (err, state) => {
+                            states.push(state.val);
+                            this.log.info(state.val);
+                        });
+                    }
+
+                    this.log.info(JSON.stringify(states));
+                }
+            }
         }
     }
 

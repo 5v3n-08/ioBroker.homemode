@@ -40,8 +40,8 @@
             // reinitialize all the Materialize labels on the page if you are dynamically adding inputs:
             if (M) M.updateTextFields();
 
-            values2table('trashtypes', settings.trashtypes || [], onChange);
-            fillRadarServices('#radar2', settings.radarIntance);
+            values2table('setup', settings.setup || [], onChange);
+            fillRadarServices('#radar2', settings.radar2);
         }
 
         // This will be called by the admin adapter when the user presses the save button
@@ -56,6 +56,8 @@
                     obj[$this.attr('id')] = $this.val();
                 }
             });
+
+            obj.setup = table2values('setup');
             callback(obj);
         }
 
@@ -76,37 +78,39 @@
 </head>
 
 <body>
-   <div class="m adapter-container">
-
+    <div class="m adapter-container">
         <div class="col s12">
             <ul class="tabs">
                 <li class="tab col s2"><a href="#tab-main" class="translate active">main settings</a></li>
-                <li class="tab col s2"><a href="#tab-trashtypes" class="translate">trash types</a></li>
+                <li class="tab col s2"><a href="#tab-setup" class="translate">trash types</a></li>
             </ul>
         </div>
-
         <div id="tab-main" class="col s12 page">
+            <div class="row">
+                <div class="col s6">
+                    <img src="trashschedule.png" class="logo">
+                </div>
+            </div>
             <div class="row">
                 <div class="col s6 input-field">
                 <select class="value" id="radar2"></select>
                 <label for="radar2" class="translate">ical instance</label>
                 <span class="translate">ical instance help</span>
                 </div>
-                xxx
+                xxx1
             </div>
-        
         </div>
-        <div id="tab-main" class="col s12 page">
+        <div id="tab-setup" class="col s12 page">
             <div class="row">
-                <div class="col s12" id="trashtypes">
+                <div class="col s12" id="setup">
                     <a class="btn-floating waves-effect waves-light blue table-button-add"><i class="material-icons">add</i></a>
                     <div class="table-values-div">
                         <table class="table-values">
                             <thead>
                                 <tr>
-                                    <th data-name="name" style="width: 40%" class="translate">name</th>
-                                    <th data-name="match" style="width: 40%" class="translate">event match</th>
-                                    <th data-name="exactmatch" style="width: 70px" data-style="width: 70px" data-type="checkbox" class="translate">exact match</th>
+                                    <th data-name="rgr" style="width: 40%" class="translate">rgr</th>
+                                    <th data-name="rr" style="width: 40%" class="translate">rr</th>
+                                    <th data-name="devices" style="width: 40%" class="translate">devices</th>
                                     <th data-buttons="delete" style="width: 10%"></th>
                                 </tr>
                             </thead>
@@ -121,11 +125,11 @@
                 <div class="col s6 input-field">
                     <span class="translate">table match help</span>
                 </div>
+                <div class="col s6 input-field">
+                    <span class="translate">table devices help</span>
+                </div>
             </div>
         </div>
-        
-        </div>
-
     </div>
 </body>
 

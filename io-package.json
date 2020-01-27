@@ -72,7 +72,6 @@
         ]
     },
     "native": {
-        "radarIntance": "radar2.0"
     },
     "objects": [],
     "instanceObjects": []
