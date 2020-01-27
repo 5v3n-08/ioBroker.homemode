@@ -44,7 +44,7 @@ class Template extends utils.Adapter {
         Here a simple template for a boolean variable named "testVariable"
         Because every adapter instance uses its own unique namespace variable names can't collide with other adapters variables
         */
-        await this.setObjectAsync('testVariable', {
+        await this.setObjectIfNotExistsAsync('testVariable', {
             type: 'state',
             common: {
                 name: 'testVariable',
@@ -79,6 +79,7 @@ class Template extends utils.Adapter {
 
         result = await this.checkGroupAsync('admin', 'admin');
         this.log.info('check group user admin group admin: ' + result);
+        this.log.info('ready...');
     }
 
     /**
