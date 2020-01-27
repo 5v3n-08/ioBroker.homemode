@@ -32,13 +32,6 @@ class Template extends utils.Adapter {
      * Is called when databases are connected and adapter received configuration.
      */
     async onReady() {
-        const RESIDENTS = {
-            'rgr_Bewohner': {
-                'rr_Sven' : {
-                    'devices': ['gTag-Sven']
-                }
-            }
-        };
 
         // Initialize your adapter here
 
@@ -91,9 +84,8 @@ class Template extends utils.Adapter {
                 });
 
                 for (const device in RESIDENTS[residents][roommate]['devices']) {
-                    this.subscribeForeignStates(this.config.radarIntance + '.' + device + '._here');
-                    this.log.info(JSON.stringify(this.config));
-                    this.log.info(this.config.radarIntance + '.' + device + '._here');
+                    this.subscribeForeignStates(this.config.radarIntance + '.' + RESIDENTS[residents][roommate]['devices'][device] + '._here');
+                    this.log.info(this.config.radarIntance + '.' + RESIDENTS[residents][roommate]['devices'][device] + '._here');
                 }
             }
 
@@ -165,11 +157,6 @@ class Template extends utils.Adapter {
             // The object was changed
             this.log.info(`object ${id} changed: ${JSON.stringify(obj)}`);
         }
-
-        if (id.includes(this.config.radarIntance)) {
-            let split = id.split('.');
-            this.log.info(split);
-        }
     }
 
     /**
@@ -181,9 +168,17 @@ class Template extends utils.Adapter {
         if (state) {
             // The state was changed
             this.log.info(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
-        } else {
-            // The state was deleted
-            this.log.info(`state ${id} deleted`);
+        }
+        if (id.includes(this.config.radarIntance)) {
+            const device = id.split('.')[2];
+            // for (const residents in RESIDENTS) {
+            //     for (const roommate in RESIDENTS[residents]) {
+            //         if (condition) {
+                        
+            //         }
+            //     }
+            // }
+            this.log.info(device);
         }
     }
 

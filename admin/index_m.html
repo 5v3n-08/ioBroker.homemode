@@ -41,7 +41,7 @@
             if (M) M.updateTextFields();
 
 
-            fillCalenderServices('#ical', settings.ical, settings.type);
+            fillCalenderServices('#radar2', settings.ical, settings.type);
         }
 
         // This will be called by the admin adapter when the user presses the save button
@@ -60,7 +60,7 @@
         }
 
         function fillCalenderServices(elem, current, type) {
-            socket.emit('getObjectView', 'system', 'instance', {startkey: 'system.adapter.ical.', endkey: 'system.adapter.ical.\u9999'}, function (err, res) {
+            socket.emit('getObjectView', 'system', 'instance', {startkey: 'system.adapter.radar2.', endkey: 'system.adapter.radar2.\u9999'}, function (err, res) {
                 if (!err && res) {
                     for (var i = 0; i < res.rows.length; i++) {
                         var n =  res.rows[i].id.replace('system.adapter.', '');
@@ -89,11 +89,11 @@
       <!-- For example columns with settings: -->
       <div class="row">
          <div class="col s6 input-field">
-            <select class="value" id="ical"></select>
-            <label for="ical" class="translate">ical instance</label>
+            <select class="value" id="radar2"></select>
+            <label for="radar2" class="translate">ical instance</label>
             <span class="translate">ical instance help</span>
         </div>
-        sss
+        xxx
       </div>
 
   </div>
