@@ -39,7 +39,8 @@ class Template extends utils.Adapter {
         // this.config:
        
         // this.log.info('config option2: ' + this.config.option2);
-        
+        this.config.radarIntance = 'javascript.0';
+        this.log.info(JSON.stringify(this.config));
         for (const residents in RESIDENTS) {
             this.setObjectNotExists(residents, {
                 type: 'channel',

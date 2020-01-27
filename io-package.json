@@ -72,8 +72,7 @@
         ]
     },
     "native": {
-        "radarIntance": "javascript.0",
-        "option2": "42"
+        "radarIntance": "radar2.0"
     },
     "objects": [],
     "instanceObjects": []
