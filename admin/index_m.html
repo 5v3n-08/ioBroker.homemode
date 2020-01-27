@@ -39,6 +39,9 @@
             onChange(false);
             // reinitialize all the Materialize labels on the page if you are dynamically adding inputs:
             if (M) M.updateTextFields();
+
+
+            fillCalenderServices('#ical', settings.ical, settings.type);
         }
 
         // This will be called by the admin adapter when the user presses the save button
@@ -54,6 +57,19 @@
                 }
             });
             callback(obj);
+        }
+
+        function fillCalenderServices(elem, current, type) {
+            socket.emit('getObjectView', 'system', 'instance', {startkey: 'system.adapter.ical.', endkey: 'system.adapter.ical.\u9999'}, function (err, res) {
+                if (!err && res) {
+                    for (var i = 0; i < res.rows.length; i++) {
+                        var n =  res.rows[i].id.replace('system.adapter.', '');
+                        $(elem).append('<option value="' + n + '">' + n + '</option>');
+                    }
+                }
+                $(elem).val(current);
+                $(elem).select();
+            });
         }
     </script>
 
@@ -77,6 +93,7 @@
             <label for="ical" class="translate">ical instance</label>
             <span class="translate">ical instance help</span>
         </div>
+        sss
       </div>
 
   </div>

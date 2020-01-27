@@ -32,29 +32,89 @@ class Template extends utils.Adapter {
      * Is called when databases are connected and adapter received configuration.
      */
     async onReady() {
+        const RESIDENTS = {
+            'rgr_Bewohner': {
+                'rr_Sven' : {
+                    'devices': ['gTag-Sven']
+                }
+            }
+        };
+
         // Initialize your adapter here
 
         // The adapters config (in the instance object everything under the attribute "native") is accessible via
         // this.config:
-        this.log.info('config option1: ' + this.config.option1);
-        this.log.info('config option2: ' + this.config.option2);
+       
+        // this.log.info('config option2: ' + this.config.option2);
+        
+        for (const residents in RESIDENTS) {
+            this.setObjectNotExists(residents, {
+                type: 'channel',
+                common: {
+                    name: 'RESIDENTS: ' + residents
+                },
+                native: {}
+            });
 
+            this.setObjectNotExists(residents + '.state', {
+                type: 'state',
+                common: {
+                    name: 'state',
+                    type: 'boolean',
+                    role: 'value',
+                    read: true,
+                    write: false
+                },
+                native: {}
+            });
+
+            for (const roommate in RESIDENTS[residents]) {
+                this.setObjectNotExists(residents + '.' + roommate, {
+                    type: 'channel',
+                    common: {
+                        name: 'ROOMMATE: ' + roommate
+                    },
+                    native: {}
+                });
+
+                this.setObjectNotExists(residents + '.' + roommate + '.devices', {
+                    type: 'state',
+                    common: {
+                        name: 'devices',
+                        def: RESIDENTS[residents][roommate]['devices'],
+                        type: 'array',
+                        role: 'list',
+                        read: true,
+                        write: false
+                    },
+                    native: {}
+                });
+
+                for (const device in RESIDENTS[residents][roommate]['devices']) {
+                    this.subscribeForeignStates(this.config.radarIntance + '.' + device + '._here');
+                    this.log.info(JSON.stringify(this.config));
+                    this.log.info(this.config.radarIntance + '.' + device + '._here');
+                }
+            }
+
+            
+        }
         /*
         For every state in the system there has to be also an object of type state
         Here a simple template for a boolean variable named "testVariable"
         Because every adapter instance uses its own unique namespace variable names can't collide with other adapters variables
         */
-      //   await this.setObjectIfNotExistsAsync('testVariable', {
-      //       type: 'state',
-      //       common: {
-      //           name: 'testVariable',
-      //           type: 'boolean',
-      //           role: 'indicator',
-      //           read: true,
-      //           write: true,
-      //       },
-      //       native: {},
-      //   });
+        //   await this.setObjectIfNotExistsAsync('testVariable', {
+        //       type: 'state',
+        //       common: {
+        //           name: 'testVariable',
+        //           type: 'boolean',
+        //           role: 'indicator',
+        //           read: true,
+        //           write: true,
+        //       },
+        //       native: {},
+        //   });
 
         // in this template all states changes inside the adapters namespace are subscribed
         this.subscribeStates('*');
@@ -104,9 +164,11 @@ class Template extends utils.Adapter {
         if (obj) {
             // The object was changed
             this.log.info(`object ${id} changed: ${JSON.stringify(obj)}`);
-        } else {
-            // The object was deleted
-            this.log.info(`object ${id} deleted`);
+        }
+
+        if (id.includes(this.config.radarIntance)) {
+            let split = id.split('.');
+            this.log.info(split);
         }
     }
 
