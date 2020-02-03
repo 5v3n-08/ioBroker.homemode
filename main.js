@@ -38,9 +38,6 @@ class Template extends utils.Adapter {
 
         // The adapters config (in the instance object everything under the attribute "native") is accessible via
         // this.config:
-       
-        // this.log.info('config option2: ' + this.config.option2);
-        this.log.info(JSON.stringify(this.config));
         for (const index in this.config.setup) {
             this.setObjectNotExists(this.config.setup[index]['rgr'], {
                 type: 'channel',
@@ -99,11 +96,7 @@ class Template extends utils.Adapter {
                 },
                 native: {}
             });
-
-            // for (const device in this.config.setup[index]['devices']) {
             this.subscribeForeignStates(this.config.setup[index]['devices']);
-            this.log.info(this.config.setup[index]['devices']);
-            // }
         }
 
         /*
