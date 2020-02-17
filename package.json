@@ -52,7 +52,7 @@
     "lint": "eslint"
   },
   "bugs": {
-    "url": "https://github.com/5v3n-08/ioBroker.homemode"
+    "url": "https://github.com/5v3n-08/ioBroker.homemode/issues"
   },
   "readmeFilename": "README.md"
 }
